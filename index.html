@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calc Quest</title>
+  <meta name="description" content="A pixel-art calculator puzzle: hit the target number using only the operations you're given.">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main class="app">
+    <h1 class="logo"><span class="logo-a">CALC</span><span class="logo-b">QUEST</span></h1>
+
+    <section id="menu" class="screen" aria-label="Menu">
+      <p class="intro px">Make the target number using only the operations you're given. Every number is a single digit from 1 to 9.</p>
+
+      <div class="levels">
+        <button type="button" class="btn level" data-level="easy">
+          <span class="lv-name">EASY</span>
+          <span class="lv-desc px-text">2 or 3 numbers · + − ×</span>
+          <span class="lv-best">BEST <b data-best="easy">0</b></span>
+        </button>
+        <button type="button" class="btn level" data-level="normal">
+          <span class="lv-name">NORMAL</span>
+          <span class="lv-desc px-text">3 or 4 numbers · + − × ÷</span>
+          <span class="lv-best">BEST <b data-best="normal">0</b></span>
+        </button>
+        <button type="button" class="btn level" data-level="hard">
+          <span class="lv-name">HARD</span>
+          <span class="lv-desc px-text">4 or 5 numbers · no digit twice</span>
+          <span class="lv-best">BEST <b data-best="hard">0</b></span>
+        </button>
+      </div>
+
+      <ul class="rules px px-text">
+        <li><span class="icon t">45</span><span>Hit the target number.</span></li>
+        <li><span class="icon o">×−</span><span>Use every operation shown, and no others.</span></li>
+        <li><span class="icon n">3</span><span>Use exactly that many numbers.</span></li>
+        <li><span class="icon p">×÷</span><span>× and ÷ are worked out before + and −. ÷ must come out even.</span></li>
+        <li><span class="icon h">?</span><span>A hint costs 50 points. Faster answers score more.</span></li>
+      </ul>
+
+      <div class="menu-bottom">
+        <button type="button" class="btn" id="soundBtn" aria-pressed="true">SOUND ON</button>
+      </div>
+    </section>
+
+    <section id="game" class="screen" aria-label="Game" hidden>
+      <div class="hud">
+        <div class="stat px"><span class="label">PUZZLE</span><span id="hudRound" class="value"></span></div>
+        <div class="stat px"><span class="label">SCORE</span><span id="hudScore" class="value"></span></div>
+        <div class="stat px"><span class="label">TIME</span><span id="hudTime" class="value"></span></div>
+      </div>
+
+      <section class="task px" aria-live="polite">
+        <span class="label">FIND</span>
+        <div id="target" class="target"></div>
+        <div class="task-foot">
+          <div class="task-part"><span class="label">USING</span><span id="taskOps" class="task-ops"></span></div>
+          <div class="task-part"><span class="label">NUMBERS</span><span id="taskCount" class="task-count"></span></div>
+        </div>
+      </section>
+
+      <section class="lcd px" aria-label="Your answer">
+        <div id="slots" class="slots" role="img"></div>
+        <div class="lcd-foot">
+          <span id="result" class="result"></span>
+          <p id="message" class="message px-text" aria-live="polite"></p>
+        </div>
+        <p id="hint" class="hint px-text" hidden></p>
+      </section>
+
+      <div id="keypad" class="keypad">
+        <button type="button" class="btn key" data-key="7"></button>
+        <button type="button" class="btn key" data-key="8"></button>
+        <button type="button" class="btn key" data-key="9"></button>
+        <button type="button" class="btn key op" data-key="/"></button>
+        <button type="button" class="btn key" data-key="4"></button>
+        <button type="button" class="btn key" data-key="5"></button>
+        <button type="button" class="btn key" data-key="6"></button>
+        <button type="button" class="btn key op" data-key="*"></button>
+        <button type="button" class="btn key" data-key="1"></button>
+        <button type="button" class="btn key" data-key="2"></button>
+        <button type="button" class="btn key" data-key="3"></button>
+        <button type="button" class="btn key op" data-key="-"></button>
+        <button type="button" class="btn key fn" data-key="clear" aria-label="Clear">CLR</button>
+        <button type="button" class="btn key fn" data-key="back" aria-label="Delete">DEL</button>
+        <button type="button" class="btn key fn go" data-key="enter" id="enterKey" aria-label="Check">OK</button>
+        <button type="button" class="btn key op" data-key="+"></button>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn" id="quitBtn">MENU</button>
+        <button type="button" class="btn" id="hintBtn">HINT -50</button>
+        <button type="button" class="btn" id="skipBtn">SKIP</button>
+        <button type="button" class="btn btn-go" id="nextBtn" hidden>NEXT &#9654;</button>
+      </div>
+
+      <p class="help">KEYS 1-9 &middot; + - * / &middot; BACKSPACE &middot; ESC CLEAR &middot; ENTER</p>
+    </section>
+
+    <section id="summary" class="screen" aria-label="Round results" hidden>
+      <div class="sum px">
+        <p class="big">ROUND CLEAR</p>
+        <div id="sumScore" class="sum-score"></div>
+        <p id="sumSolved" class="sum-line px-text"></p>
+        <p id="sumBest" class="sum-line good" hidden>NEW BEST!</p>
+        <ol id="sumList" class="sum-list"></ol>
+        <div class="sum-actions">
+          <button type="button" class="btn btn-go" id="againBtn">PLAY AGAIN</button>
+          <button type="button" class="btn" id="homeBtn">MENU</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/pixel-num.js"></script>
+  <script src="js/puzzle.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
